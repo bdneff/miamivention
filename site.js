@@ -344,6 +344,7 @@
       '<label class="secret-title" for="mv-pass">Secret Password</label>' +
       '<div class="secret-row"><input id="mv-pass" type="password" autocomplete="current-password" required aria-describedby="mv-err">' +
       '<button class="secret-go" type="submit" aria-label="Enter">➜</button></div>' +
+      '<p class="secret-hint">*hint* Brandon G\'s Favorite Thing</p>' +
       '<p class="secret-err" id="mv-err" role="alert"></p>' +
       "</form>";
     document.body.appendChild(back);

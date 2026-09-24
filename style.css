@@ -815,3 +815,5 @@ html.disco .win { animation: disco-shake 0.3s steps(2) infinite; }
 }
 .crew .bio { font-family: "Times New Roman", serif; font-style: italic; font-size: 14px; line-height: 1.35; color: #f3e8ff; margin-top: 6px; padding-top: 6px; border-top: 1px dashed var(--purple); }
 @media (max-width: 600px) { .crew .bio { font-size: 12px; } }
+.secret-hint { margin: 14px 0 0; font-family: "VT323", monospace; font-size: 22px; letter-spacing: 1px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
+.secret-hint + .secret-err { margin-top: 6px; }
