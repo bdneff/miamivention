@@ -817,3 +817,22 @@ html.disco .win { animation: disco-shake 0.3s steps(2) infinite; }
 @media (max-width: 600px) { .crew .bio { font-size: 12px; } }
 .secret-hint { margin: 14px 0 0; font-family: "VT323", monospace; font-size: 22px; letter-spacing: 1px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
 .secret-hint + .secret-err { margin-top: 6px; }
+
+.ad.pooply { text-decoration: none; box-sizing: border-box; background: repeating-linear-gradient(90deg, #6b3a0c 0 40px, #a0612a 40px 80px); border-color: var(--mint); animation-duration: 0.9s; }
+
+/* promoted LinkedIn post */
+.linkedin { font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 15px; line-height: 1.5; max-width: 62ch; margin-left: auto; margin-right: auto; }
+.linkedin p { margin: 0 0 10px; }
+.li-head { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; line-height: 1.3; }
+.li-avatar { width: 48px; height: 48px; border-radius: 50%; background: #6b3a0c; display: grid; place-items: center; font-size: 28px; flex-shrink: 0; }
+.li-stats { border-top: 1px solid #ddd; padding-top: 8px; color: #555; }
+.li-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.li-cta { background: #0a66c2; color: #fff; font-weight: bold; }
+.li-cta:hover { background: #004182; color: #fff; }
+
+.aesthetic { white-space: nowrap; letter-spacing: 0.22em; }
+.two-up > .win { display: flex; flex-direction: column; }
+.two-up > .win > .win-body { flex: 1; }
+.two-up > .win > .countdown { display: flex; flex-direction: column; justify-content: center; }
+.ad.pooply { animation-name: pooply-flash; }
+@keyframes pooply-flash { 50% { background: repeating-linear-gradient(90deg, var(--yellow) 0 40px, #e0a458 40px 80px); color: #3b1f06; text-shadow: 1px 1px 0 #fff; } }

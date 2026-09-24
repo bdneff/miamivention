@@ -68,7 +68,7 @@
       '<a class="btn' + (here === "home" ? " here" : "") + '" href="index.html">🏠 Home</a>' +
       '<a class="btn' + (here === "itinerary" ? " here" : "") + '" href="itinerary.html">📅 Itinerary</a>' +
       "</div>" +
-      '<div class="tray"><span>🔊</span><span class="tz">MIA</span><span class="clock"></span></div>');
+      '<div class="tray"><span title="Pooply™ is running in the background">💩</span><span>🔊</span><span class="tz">MIA</span><span class="clock"></span></div>');
     var menu = el("div", { class: "startmenu", id: "startmenu", hidden: "" },
       '<div class="side">Miamivention<b>95</b></div><ul>' +
       '<li><a href="index.html">🏠 Homepage</a></li>' +
@@ -82,6 +82,7 @@
       '<li><a href="itinerary.html#flights">✈️ Flights</a></li>' +
       '<li><a href="itinerary.html#packing">🧳 Packing List</a></li>' +
       "<li><hr></li>" +
+      '<li><button type="button" data-pooply>💩 Pooply™</button></li>' +
       '<li><button type="button" data-shutdown>🔌 Shut Down...</button></li>' +
       "</ul>");
     document.body.append(menu, bar);
@@ -94,6 +95,10 @@
     start.addEventListener("click", function (e) { e.stopPropagation(); setOpen(menu.hidden); });
     document.addEventListener("click", function (e) { if (!menu.contains(e.target)) setOpen(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
+    menu.querySelector("[data-pooply]").addEventListener("click", function () {
+      setOpen(false);
+      popup("Pooply™ AI has analyzed this website.\n\nPoop Score: 94. Bristol Type 4. Well hydrated.\n\nUnlike you.", "Pooply™");
+    });
     menu.querySelector("[data-shutdown]").addEventListener("click", function () {
       setOpen(false);
       popup("It is now safe to turn off your vacation.\n\nJust kidding. It is never safe. You live here now.", "Shut Down Miamivention");
@@ -178,7 +183,7 @@
   }
 
   // Make it rain.
-  var loot = ["🐬", "🌴", "💿", "📼", "🍹", "💸", "💎", "🌺", "🕶️", "🍾"];
+  var loot = ["🐬", "🌴", "💿", "📼", "🍹", "💸", "💎", "🌺", "🕶️", "🍾", "💩"];
   function rain() {
     var d = el("div", { class: "rain", "aria-hidden": "true" }, loot[Math.floor(Math.random() * loot.length)]);
     d.style.left = Math.random() * 100 + "vw";
@@ -190,7 +195,7 @@
   }
 
   // Burst wherever you click.
-  var burst = ["🐬", "✨", "💸", "🌴", "💎", "🍹"];
+  var burst = ["🐬", "✨", "💸", "🌴", "💎", "💩"];
   function pop(x, y) {
     for (var i = 0; i < 12; i++) {
       var b = el("div", { class: "burst", "aria-hidden": "true" }, burst[i % burst.length]);
@@ -352,7 +357,7 @@
       "</form>";
     document.body.appendChild(back);
     var form = back.querySelector("form"), pass = back.querySelector("#mv-pass"), err = back.querySelector(".secret-err");
-    var nope = ["ACCESS DENIED", "Nope. Ask the group chat.", "Wrong. Have you tried being cooler?", "Incorrect. Security has been notified (it's Miami Brandon, he's asleep).", "Still wrong. This is why you weren't in the first group chat."], tries = 0;
+    var nope = ["ACCESS DENIED", "Nope. Ask the group chat.", "Wrong. Have you tried being cooler?", "Incorrect. Security has been notified (it's Miami Brandon, he's asleep).", "Still wrong. This is why you weren't in the first group chat.", "Wrong. That's a Pooply™-level failure."], tries = 0;
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       err.textContent = "Verifying...";
