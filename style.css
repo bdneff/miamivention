@@ -817,18 +817,3 @@ html.disco .win { animation: disco-shake 0.3s steps(2) infinite; }
 @media (max-width: 600px) { .crew .bio { font-size: 12px; } }
 .secret-hint { margin: 14px 0 0; font-family: "VT323", monospace; font-size: 22px; letter-spacing: 1px; color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
 .secret-hint + .secret-err { margin-top: 6px; }
-.enter-btn {
-  font-family: "Audiowide", "Arial Black", sans-serif;
-  font-size: clamp(26px, 8vw, 40px);
-  line-height: 1.1;
-  color: #fff;
-  background: rgba(26, 0, 51, 0.75);
-  border: 3px solid var(--pink);
-  padding: 22px 30px;
-  cursor: pointer;
-  text-shadow: 0 0 8px var(--pink), 0 0 20px var(--hot);
-  box-shadow: 0 0 24px var(--pink), inset 0 0 18px rgba(255, 113, 206, 0.4);
-  animation: enter-pulse 1.2s ease-in-out infinite;
-}
-.enter-btn:hover, .enter-btn:focus-visible { border-color: var(--cyan); box-shadow: 0 0 30px var(--cyan), inset 0 0 18px rgba(1, 205, 254, 0.4); outline: none; }
-@keyframes enter-pulse { 50% { transform: scale(1.05); } }

@@ -82,7 +82,6 @@
       '<li><a href="itinerary.html#flights">✈️ Flights</a></li>' +
       '<li><a href="itinerary.html#packing">🧳 Packing List</a></li>' +
       "<li><hr></li>" +
-      '<li><button type="button" data-logoff>🔒 Log Off...</button></li>' +
       '<li><button type="button" data-shutdown>🔌 Shut Down...</button></li>' +
       "</ul>");
     document.body.append(menu, bar);
@@ -95,10 +94,6 @@
     start.addEventListener("click", function (e) { e.stopPropagation(); setOpen(menu.hidden); });
     document.addEventListener("click", function (e) { if (!menu.contains(e.target)) setOpen(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
-    menu.querySelector("[data-logoff]").addEventListener("click", function () {
-      try { localStorage.removeItem(PASS_KEY); } catch (e) {}
-      location.reload();
-    });
     menu.querySelector("[data-shutdown]").addEventListener("click", function () {
       setOpen(false);
       popup("It is now safe to turn off your vacation.\n\nJust kidding. It is never safe. You live here now.", "Shut Down Miamivention");
@@ -354,7 +349,6 @@
       e.preventDefault();
       err.textContent = "Verifying...";
       decrypt(pass.value.trim().toLowerCase()).then(function () {
-        try { localStorage.setItem(PASS_KEY, pass.value.trim().toLowerCase()); } catch (e2) {}
         back.classList.add("granted");
         setTimeout(function () { back.remove(); }, 600);
         done();
@@ -369,32 +363,11 @@
     pass.focus();
   }
 
-  // Returning visitors: a 90s "click to enter" splash. The tap is what lets the music play with sound.
-  function splash(done) {
-    var back = el("div", { class: "gatekeeper" },
-      '<div class="secret"><p class="katakana">ようこそ</p>' +
-      '<button class="enter-btn" type="button">ENTER<br>MIAMIVENTION</button>' +
-      '<p class="secret-hint">🔊 sound on. neighbors warned.</p></div>');
-    document.body.appendChild(back);
-    var btn = back.querySelector(".enter-btn");
-    btn.addEventListener("click", function () {
-      play();
-      back.classList.add("granted");
-      setTimeout(function () { back.remove(); }, 600);
-      done();
-    });
-    btn.focus();
-  }
-
+  // The password is asked for on every visit; nothing is remembered.
   function gate(done) {
+    try { localStorage.removeItem(PASS_KEY); } catch (e) {} // clear passwords saved by older versions
     if (window.TRIP) return done(); // plain data.js loaded (local editing)
-    var saved = null;
-    try { saved = localStorage.getItem(PASS_KEY); } catch (e) {}
-    if (!saved) return login(done);
-    decrypt(saved).then(function () { splash(done); }, function () {
-      try { localStorage.removeItem(PASS_KEY); } catch (e) {}
-      login(done);
-    });
+    login(done);
   }
 
   function ready(fn) { if (unlocked) fn(); else queue.push(fn); }

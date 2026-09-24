@@ -20,7 +20,7 @@ All trip details (names, flights, the Airbnb, crew photos) live in `data.enc.js`
 
 Flight landings and takeoffs at MIA/FLL are added to the day-by-day itinerary automatically, so only list the plans in `days`.
 
-To change the password, run step 3 with a new one. Anyone who saved the old password is asked for the new one.
+To change the password, run step 3 with a new one. The site asks for the password on every visit and never remembers it.
 
 ## Other bits
 
