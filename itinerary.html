@@ -24,7 +24,7 @@
     </div>
   </header>
 
-  <div class="marquee"><span>✦ OFFICIAL MIAMIVENTION ITINERARY ✦ ALL TIMES MIAMI TIME UNLESS NOTED ✦ BE THERE OR BE SQUARE ✦ THE YACHT WAITS FOR NO ONE 🛥️ THE WORLD IS YOURS 🌎</span></div>
+  <div class="marquee"><span>✦ OFFICIAL MIAMIVENTION ITINERARY ✦ ALL TIMES MIAMI TIME (ADD 3 HOURS FOR MIAMI BRANDON) ✦ THE ITINERARY IS A SUGGESTION. THE HANGOVER IS NOT ✦ THE YACHT WAITS FOR NO ONE 🛥️ THE WORLD IS YOURS 🌎</span></div>
 
   <div class="two-up">
     <section class="win">
@@ -82,7 +82,7 @@
     </section>
   </div>
 
-  <div class="marquee reverse"><span>✦ HYDRATE ✦ SUNSCREEN ✦ CHECK THE GROUP CHAT ✦ NO ONE GETS LEFT AT THE CLUB ✦ SOMEONE PICK UP LEVI SATURDAY MORNING ✦</span></div>
+  <div class="marquee reverse"><span>✦ HYDRATE ✦ SUNSCREEN ✦ CHECK THE GROUP CHAT ✦ NO ONE GETS LEFT AT THE CLUB (AGAIN) ✦ SOMEONE PICK UP LEVI SATURDAY MORNING ✦ DO NOT LET BLAKE NEAR THE AUX ✦</span></div>
 
   <p class="center small" style="color:#fff">© 1996-<span id="year"></span> Miamivention Enterprises. <a href="index.html" style="color:var(--cyan)">Back to the homepage</a>.</p>
 
@@ -136,8 +136,8 @@ MV.ready(function () {
     if (!day) return;
     var names = who(f.people);
     var ev = f.dir === "in"
-      ? { time: time, title: names + " land" + (f.people.length > 1 ? "" : "s") + " at " + local, where: LOCAL[local], tag: "travel", flight: flightName(f), notes: "Needs a ride from " + local + "." }
-      : { time: time, title: names + " fl" + (f.people.length > 1 ? "y" : "ies") + " out of " + local, where: LOCAL[local], tag: "travel", flight: flightName(f), notes: "Leave for the airport by " + fmtTime(pad2(+time.split(":")[0] - 2) + ":" + time.split(":")[1]) + "." };
+      ? { time: time, title: names + " land" + (f.people.length > 1 ? "" : "s") + " at " + local, where: LOCAL[local], tag: "travel", flight: flightName(f), notes: "Needs a ride from " + local + ". Has not slept. Approach slowly." }
+      : { time: time, title: names + " fl" + (f.people.length > 1 ? "y" : "ies") + " out of " + local, where: LOCAL[local], tag: "travel", flight: flightName(f), notes: "Leave for the airport by " + fmtTime(pad2(+time.split(":")[0] - 2) + ":" + time.split(":")[1]) + ". Say goodbye to your liver." };
     if (f.conf) ev.conf = f.conf;
     day.events.push(ev);
   });
@@ -189,7 +189,7 @@ MV.ready(function () {
     return '<section class="win" id="day-' + di + '"><div class="win-title"><span>📅 DAY ' + (di + 1) + " — " +
       esc(fmtDate(d.date).toUpperCase()) + '</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>' +
       '<div class="win-body"><p class="day-theme">&gt; ' + esc(d.theme) + "</p>" +
-      (rows ? '<table class="events">' + rows + "</table>" : '<p class="small" style="margin:0">Nothing planned yet.</p>') + "</div>" +
+      (rows ? '<table class="events">' + rows + "</table>" : '<p class="small" style="margin:0">Nothing planned yet. Historically, this is when the worst decisions happen.</p>') + "</div>" +
       '<div class="win-status">In town: ' + esc(inTown(d.date).join(", ")) + "</div></section>";
   }).join("");
 
@@ -211,7 +211,7 @@ MV.ready(function () {
         (a.ev.where ? " · " + mapsLink(a.ev.where) : "") + "</span></div>";
     }
     var html = (live ? box("", "&gt;&gt;&gt; RIGHT NOW", live) : "") + (next ? box("next", "&gt;&gt;&gt; UP NEXT", next) : "");
-    document.getElementById("now").innerHTML = html || '<div class="now-box"><span class="v">That\'s a wrap. See you next Miamivention.</span></div>';
+    document.getElementById("now").innerHTML = html || '<div class="now-box"><span class="v">That\'s a wrap. Go home. Call your mother. Drink a water.</span></div>';
   }
   refresh();
   setInterval(refresh, 30000);

@@ -101,7 +101,7 @@
     });
     menu.querySelector("[data-shutdown]").addEventListener("click", function () {
       setOpen(false);
-      popup("It is now safe to turn off your vacation.\n\nJust kidding. It is never safe to turn off your vacation.", "Shut Down Miamivention");
+      popup("It is now safe to turn off your vacation.\n\nJust kidding. It is never safe. You live here now.", "Shut Down Miamivention");
     });
 
     // Miami time in the system tray
@@ -138,12 +138,12 @@
       var now = new Date();
       if (now >= end) {
         label.textContent = "MIAMIVENTION HAS CONCLUDED";
-        digits.textContent = "THANK YOU FOR ATTENDING";
+        digits.textContent = "PLEASE CALL YOUR DOCTOR";
         return;
       }
       if (now >= start) {
         label.textContent = "STATUS";
-        digits.textContent = "🌴 NOW IN SESSION 🌴";
+        digits.textContent = "🌴 IN SESSION. GOD HELP US 🌴";
         return;
       }
       var s = Math.floor((start - now) / 1000);
@@ -348,7 +348,7 @@
       "</form>";
     document.body.appendChild(back);
     var form = back.querySelector("form"), pass = back.querySelector("#mv-pass"), err = back.querySelector(".secret-err");
-    var nope = ["ACCESS DENIED", "Nope. Ask the group chat.", "Incorrect. The yacht remains locked.", "Wrong again. Security has been notified."], tries = 0;
+    var nope = ["ACCESS DENIED", "Nope. Ask the group chat.", "Wrong. Have you tried being cooler?", "Incorrect. Security has been notified (it's Miami Brandon, he's asleep).", "Still wrong. This is why you weren't in the first group chat."], tries = 0;
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       err.textContent = "Verifying...";
