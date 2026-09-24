@@ -369,12 +369,29 @@
     pass.focus();
   }
 
+  // Returning visitors: a 90s "click to enter" splash. The tap is what lets the music play with sound.
+  function splash(done) {
+    var back = el("div", { class: "gatekeeper" },
+      '<div class="secret"><p class="katakana">ようこそ</p>' +
+      '<button class="enter-btn" type="button">ENTER<br>MIAMIVENTION</button>' +
+      '<p class="secret-hint">🔊 sound on. neighbors warned.</p></div>');
+    document.body.appendChild(back);
+    var btn = back.querySelector(".enter-btn");
+    btn.addEventListener("click", function () {
+      play();
+      back.classList.add("granted");
+      setTimeout(function () { back.remove(); }, 600);
+      done();
+    });
+    btn.focus();
+  }
+
   function gate(done) {
     if (window.TRIP) return done(); // plain data.js loaded (local editing)
     var saved = null;
     try { saved = localStorage.getItem(PASS_KEY); } catch (e) {}
     if (!saved) return login(done);
-    decrypt(saved).then(done, function () {
+    decrypt(saved).then(function () { splash(done); }, function () {
       try { localStorage.removeItem(PASS_KEY); } catch (e) {}
       login(done);
     });
