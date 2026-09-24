@@ -63,5 +63,12 @@ const b64 = (buf) => Buffer.from(buf).toString("base64");
     "/* Encrypted trip data. Edit data.js, then run: node encrypt.js \"password-one\" [\"password-two\" ...] */\n" +
     "window.TRIP_ENC = " + JSON.stringify({ iter: ITERATIONS, keys, iv: b64(iv), ct: b64(ct) }) + ";\n";
   fs.writeFileSync(path.join(__dirname, "data.enc.js"), out);
+  // Bump the ?v= tags in the pages so browsers fetch the new files instead of cached ones.
+  const v = new Date().toISOString().replace(/\D/g, "").slice(0, 12);
+  for (const page of ["index.html", "itinerary.html"]) {
+    const file = path.join(__dirname, page);
+    const html = fs.readFileSync(file, "utf8").replace(/((?:style\.css|site\.js|data\.enc\.js|credits\.js))(\?v=\d+)?"/g, "$1?v=" + v + '"');
+    fs.writeFileSync(file, html);
+  }
   console.log("Wrote data.enc.js (" + out.length + " bytes, " + passwords.length + " password(s))");
 })();
