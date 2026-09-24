@@ -83,6 +83,7 @@
       '<li><a href="itinerary.html#packing">🧳 Packing List</a></li>' +
       "<li><hr></li>" +
       '<li><button type="button" data-pooply>💩 Pooply™</button></li>' +
+      '<li><button type="button" data-logoff>🔒 Log Off...</button></li>' +
       '<li><button type="button" data-shutdown>🔌 Shut Down...</button></li>' +
       "</ul>");
     document.body.append(menu, bar);
@@ -95,6 +96,10 @@
     start.addEventListener("click", function (e) { e.stopPropagation(); setOpen(menu.hidden); });
     document.addEventListener("click", function (e) { if (!menu.contains(e.target)) setOpen(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
+    menu.querySelector("[data-logoff]").addEventListener("click", function () {
+      try { localStorage.removeItem(PASS_KEY); sessionStorage.removeItem(PASS_KEY); } catch (e) {}
+      location.reload();
+    });
     menu.querySelector("[data-pooply]").addEventListener("click", function () {
       setOpen(false);
       popup("Pooply™ AI has analyzed this website.\n\nPoop Score: 94. Bristol Type 4. Well hydrated.\n\nUnlike you.", "Pooply™");
@@ -363,7 +368,7 @@
       err.textContent = "Verifying...";
       var entered = pass.value.trim().toLowerCase();
       decrypt(entered).then(function () {
-        try { sessionStorage.setItem(PASS_KEY, entered); } catch (e2) {}
+        try { localStorage.setItem(PASS_KEY, entered); } catch (e2) {}
         back.classList.add("granted");
         setTimeout(function () { back.remove(); }, 600);
         done();
@@ -378,16 +383,18 @@
     pass.focus();
   }
 
-  // The password is asked once per visit: it's kept only until the tab is closed
-  // (sessionStorage), so moving between Home and Itinerary doesn't ask again.
+  // Each person types the password once per device; after that it's remembered
+  // (Start > Log Off forgets it).
   function gate(done) {
-    try { localStorage.removeItem(PASS_KEY); } catch (e) {} // clear passwords saved by older versions
     if (window.TRIP) return done(); // plain data.js loaded (local editing)
     var saved = null;
-    try { saved = sessionStorage.getItem(PASS_KEY); } catch (e) {}
+    try { saved = localStorage.getItem(PASS_KEY) || sessionStorage.getItem(PASS_KEY); } catch (e) {}
     if (!saved) return login(done);
-    decrypt(saved).then(done, function () {
-      try { sessionStorage.removeItem(PASS_KEY); } catch (e) {}
+    decrypt(saved).then(function () {
+      try { localStorage.setItem(PASS_KEY, saved); } catch (e) {}
+      done();
+    }, function () {
+      try { localStorage.removeItem(PASS_KEY); sessionStorage.removeItem(PASS_KEY); } catch (e) {}
       login(done);
     });
   }

@@ -20,7 +20,7 @@ All trip details (names, flights, the Airbnb, crew photos) live in `data.enc.js`
 
 Flight landings and takeoffs at MIA/FLL are added to the day-by-day itinerary automatically, so only list the plans in `days`.
 
-Every password listed in step 3 unlocks the site. To add, change or drop one, rerun step 3 with the new list. The site asks for the password once per visit; it's forgotten when the browser tab is closed.
+Every password listed in step 3 unlocks the site. To add, change or drop one, rerun step 3 with the new list. Each person types the password once per device and it's remembered after that. Start → Log Off forgets it.
 
 ## Other bits
 
