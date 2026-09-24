@@ -361,7 +361,9 @@
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       err.textContent = "Verifying...";
-      decrypt(pass.value.trim().toLowerCase()).then(function () {
+      var entered = pass.value.trim().toLowerCase();
+      decrypt(entered).then(function () {
+        try { sessionStorage.setItem(PASS_KEY, entered); } catch (e2) {}
         back.classList.add("granted");
         setTimeout(function () { back.remove(); }, 600);
         done();
@@ -376,11 +378,18 @@
     pass.focus();
   }
 
-  // The password is asked for on every visit; nothing is remembered.
+  // The password is asked once per visit: it's kept only until the tab is closed
+  // (sessionStorage), so moving between Home and Itinerary doesn't ask again.
   function gate(done) {
     try { localStorage.removeItem(PASS_KEY); } catch (e) {} // clear passwords saved by older versions
     if (window.TRIP) return done(); // plain data.js loaded (local editing)
-    login(done);
+    var saved = null;
+    try { saved = sessionStorage.getItem(PASS_KEY); } catch (e) {}
+    if (!saved) return login(done);
+    decrypt(saved).then(done, function () {
+      try { sessionStorage.removeItem(PASS_KEY); } catch (e) {}
+      login(done);
+    });
   }
 
   function ready(fn) { if (unlocked) fn(); else queue.push(fn); }
