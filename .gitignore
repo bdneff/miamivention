@@ -1,0 +1,7 @@
+# Plaintext trip data stays local. Only data.enc.js is published.
+data.js
+.DS_Store
+# Crew photos are baked into data.enc.js
+images/crew/*.jpg
+images/crew/*.jpeg
+images/crew/*.png

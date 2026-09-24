@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>~*~ MIAMIVENTION ~*~ OFFICIAL ITINERARY</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%85%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Audiowide&family=Mr+Dafoe&family=VT323&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="data.enc.js"></script>
+<script src="site.js"></script>
+</head>
+<body>
+<main class="desktop" hidden>
+
+  <header class="hero solo">
+    <div class="titles">
+      <p class="katakana">マイアミベンション　旅程</p>
+      <h1 class="chrome small">ITINERARY</h1>
+      <p class="neon-script">Miamivention</p>
+      <p class="aesthetic" id="date-range"></p>
+    </div>
+  </header>
+
+  <div class="marquee"><span>✦ OFFICIAL MIAMIVENTION ITINERARY ✦ ALL TIMES MIAMI TIME UNLESS NOTED ✦ BE THERE OR BE SQUARE ✦ THE YACHT WAITS FOR NO ONE 🛥️ THE WORLD IS YOURS 🌎</span></div>
+
+  <div class="two-up">
+    <section class="win">
+      <div class="win-title"><span>⏱ COUNTDOWN.EXE</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>
+      <div class="win-body countdown"><div class="label">LOADING...</div><div class="digits">--</div></div>
+    </section>
+    <section class="win">
+      <div class="win-title"><span>📡 NOW_PLAYING.EXE</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>
+      <div class="win-body" id="now"></div>
+    </section>
+  </div>
+
+  <section class="win" id="todo-win">
+    <div class="win-title"><span>📋 TODO.TXT - Notepad</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>
+    <div class="win-body"><ul class="todo" id="todo"></ul></div>
+  </section>
+
+  <div class="btn-row">
+    <button class="btn" id="ics">📆 Add everything to my calendar</button>
+    <span id="links"></span>
+  </div>
+
+  <div class="day-jump" id="day-jump"></div>
+
+  <div id="days" style="display:flex;flex-direction:column;gap:28px"></div>
+
+  <section class="win" id="flights">
+    <div class="win-title"><span>✈️ ARRIVALS.DAT</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>
+    <div class="win-body">
+      <div class="scroll-x"><table class="info-table stack" id="arrivals-table"></table></div>
+    </div>
+    <div class="win-status">Departure times are local to the departure airport.</div>
+  </section>
+
+  <section class="win">
+    <div class="win-title"><span>🛫 DEPARTURES.DAT</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>
+    <div class="win-body">
+      <div class="scroll-x"><table class="info-table stack" id="departures-table"></table></div>
+    </div>
+    <div class="win-status">Landing times are local to the arrival airport.</div>
+  </section>
+
+  <div class="two-up">
+    <section class="win" id="lodging">
+      <div class="win-title"><span>🏨 HOME_BASE.TXT</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>
+      <div class="win-body"><table class="info-table" id="lodging-table"></table></div>
+    </section>
+
+    <section class="win" id="packing">
+      <div class="win-title"><span>🧳 PACKING.LST</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>
+      <div class="win-body">
+        <ul class="checklist" id="packing-list"></ul>
+        <p class="center small" style="margin-bottom:0"><button class="btn" id="reset-packing">Uncheck all</button><br>Checkmarks are saved on your own device.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="marquee reverse"><span>✦ HYDRATE ✦ SUNSCREEN ✦ CHECK THE GROUP CHAT ✦ NO ONE GETS LEFT AT THE CLUB ✦ SOMEONE PICK UP LEVI SATURDAY MORNING ✦</span></div>
+
+  <p class="center small" style="color:#fff">© 1996-<span id="year"></span> Miamivention Enterprises. <a href="index.html" style="color:var(--cyan)">Back to the homepage</a>.</p>
+
+</main>
+
+<script>
+MV.ready(function () {
+  var T = TRIP, esc = MV.esc, miami = MV.miami;
+  var TAGS = { food: "🍽️", party: "🪩", beach: "🏖️", boat: "🛥️", travel: "✈️", chill: "🌴" };
+  var LOCAL = { MIA: "Miami International Airport", FLL: "Fort Lauderdale-Hollywood International Airport" };
+  document.getElementById("year").textContent = T.year;
+
+  function mapsLink(where) {
+    return '<a href="https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(where) +
+      '" target="_blank" rel="noopener">📍 ' + esc(where) + "</a>";
+  }
+  function fmtTime(hhmm) {
+    var p = hhmm.split(":"), h = +p[0], ampm = h >= 12 ? "PM" : "AM";
+    return ((h + 11) % 12 + 1) + ":" + p[1] + " " + ampm;
+  }
+  function fmtDate(iso, opts) {
+    return new Date(iso + "T12:00:00").toLocaleDateString("en-US", opts || { weekday: "long", month: "long", day: "numeric" });
+  }
+  function shortDate(iso) { return fmtDate(iso, { weekday: "short", month: "numeric", day: "numeric" }); }
+  function fmtDateTime(iso) {
+    var p = iso.split("T");
+    return shortDate(p[0]) + " " + fmtTime(p[1]);
+  }
+  function who(people) {
+    return people.length < 3 ? people.join(" & ") : people.slice(0, -1).join(", ") + " & " + people[people.length - 1];
+  }
+  function flightName(f) { return f.airline + (f.flight ? " " + f.flight.replace(/^[A-Z]{2} /, "") : ""); }
+
+  document.getElementById("date-range").textContent =
+    fmtDate(T.days[0].date, { month: "short", day: "numeric" }).toUpperCase() + " — " +
+    fmtDate(T.days[T.days.length - 1].date, { month: "short", day: "numeric" }).toUpperCase() + "　" + T.year;
+
+  // ---- Merge South Florida landings and takeoffs into the days ----
+  var byDate = {};
+  var days = T.days.map(function (d) {
+    var copy = { date: d.date, theme: d.theme, events: d.events.slice() };
+    byDate[d.date] = copy;
+    return copy;
+  });
+  T.flights.forEach(function (f) {
+    var local = f.dir === "in" ? f.to : f.from;
+    if (!LOCAL[local]) return;
+    var stamp = f.dir === "in" ? f.arrives : f.departs;
+    var date = stamp.split("T")[0], time = stamp.split("T")[1];
+    var day = byDate[date];
+    if (!day) return;
+    var names = who(f.people);
+    var ev = f.dir === "in"
+      ? { time: time, title: names + " land" + (f.people.length > 1 ? "" : "s") + " at " + local, where: LOCAL[local], tag: "travel", flight: flightName(f), notes: "Needs a ride from " + local + "." }
+      : { time: time, title: names + " fl" + (f.people.length > 1 ? "y" : "ies") + " out of " + local, where: LOCAL[local], tag: "travel", flight: flightName(f), notes: "Leave for the airport by " + fmtTime(pad2(+time.split(":")[0] - 2) + ":" + time.split(":")[1]) + "." };
+    if (f.conf) ev.conf = f.conf;
+    day.events.push(ev);
+  });
+  function pad2(n) { n = (n + 24) % 24; return (n < 10 ? "0" : "") + n; }
+  days.forEach(function (d) { d.events.sort(function (a, b) { return a.time < b.time ? -1 : a.time > b.time ? 1 : 0; }); });
+
+  // ---- Who's in town each day ----
+  function inTown(date) {
+    return T.crew.filter(function (c) {
+      var arr = T.flights.filter(function (f) { return f.dir === "in" && f.people.indexOf(c.name) > -1; })[0];
+      var dep = T.flights.filter(function (f) { return f.dir === "out" && f.people.indexOf(c.name) > -1; })[0];
+      return (!arr || arr.arrives.split("T")[0] <= date) && (!dep || dep.departs.split("T")[0] >= date);
+    }).map(function (c) { return c.name; });
+  }
+
+  // Flatten events with start/end instants. An event ends when the next one
+  // that day starts, or two hours later if it's the last of the day.
+  var all = [];
+  days.forEach(function (day, di) {
+    day.events.forEach(function (ev, ei) {
+      var start = miami(day.date + "T" + ev.time);
+      var nextEv = day.events[ei + 1];
+      var end = nextEv ? miami(day.date + "T" + nextEv.time) : new Date(start.getTime() + 2 * 3600e3);
+      all.push({ ev: ev, day: day, start: start, end: end, id: "ev-" + di + "-" + ei });
+    });
+  });
+
+  // ---- Day windows ----
+  document.getElementById("day-jump").innerHTML = days.map(function (d, i) {
+    return '<a class="btn" href="#day-' + i + '">' + esc(shortDate(d.date)) + "</a>";
+  }).join("");
+
+  document.getElementById("days").innerHTML = days.map(function (d, di) {
+    var rows = d.events.map(function (ev, ei) {
+      var meta = [];
+      if (ev.where) meta.push("<span>" + mapsLink(ev.where) + "</span>");
+      if (ev.flight) meta.push("<span>✈️ " + esc(ev.flight) + "</span>");
+      if (ev.url) meta.push('<span><a href="' + esc(ev.url) + '" target="_blank" rel="noopener">🔗 link</a></span>');
+      if (ev.conf) meta.push("<span>🎟️ Conf #<b>" + esc(ev.conf) + "</b></span>");
+      if (ev.cost) meta.push("<span>💵 " + esc(ev.cost) + "</span>");
+      if (ev.who) meta.push("<span>👥 " + esc(ev.who) + "</span>");
+      var pill = ev.status ? ' <span class="pill ' + esc(ev.status.toLowerCase()) + '">' + esc(ev.status) + "</span>" : "";
+      return '<tr id="ev-' + di + "-" + ei + '"><td class="t">' + esc(ev.label || fmtTime(ev.time)) + "</td><td>" +
+        '<div class="title"><span class="tag">' + (TAGS[ev.tag] || "⭐") + "</span>" + esc(ev.title) + pill + "</div>" +
+        (meta.length ? '<div class="meta">' + meta.join("") + "</div>" : "") +
+        (ev.notes ? '<div class="notes">' + esc(ev.notes) + "</div>" : "") +
+        "</td></tr>";
+    }).join("");
+    return '<section class="win" id="day-' + di + '"><div class="win-title"><span>📅 DAY ' + (di + 1) + " — " +
+      esc(fmtDate(d.date).toUpperCase()) + '</span><span class="win-btns"><i>_</i><i>□</i><i>×</i></span></div>' +
+      '<div class="win-body"><p class="day-theme">&gt; ' + esc(d.theme) + "</p>" +
+      (rows ? '<table class="events">' + rows + "</table>" : '<p class="small" style="margin:0">Nothing planned yet.</p>') + "</div>" +
+      '<div class="win-status">In town: ' + esc(inTown(d.date).join(", ")) + "</div></section>";
+  }).join("");
+
+  // ---- Live NOW / UP NEXT, refreshed every 30s ----
+  function refresh() {
+    var now = new Date(), live = null, next = null;
+    all.forEach(function (a) {
+      var row = document.getElementById(a.id);
+      row.classList.toggle("past", now >= a.end);
+      var isLive = now >= a.start && now < a.end;
+      row.classList.toggle("live", isLive);
+      if (isLive) live = a;
+      if (!next && a.start > now) next = a;
+    });
+    function box(cls, label, a) {
+      return '<div class="now-box ' + cls + '"><span class="k">' + label + '</span><span class="v">' +
+        (TAGS[a.ev.tag] || "⭐") + " " + esc(a.ev.title) + "</span><br>" +
+        '<span class="small">' + esc(a.ev.label ? shortDate(a.day.date) + " " + a.ev.label : fmtDateTime(a.day.date + "T" + a.ev.time)) +
+        (a.ev.where ? " · " + mapsLink(a.ev.where) : "") + "</span></div>";
+    }
+    var html = (live ? box("", "&gt;&gt;&gt; RIGHT NOW", live) : "") + (next ? box("next", "&gt;&gt;&gt; UP NEXT", next) : "");
+    document.getElementById("now").innerHTML = html || '<div class="now-box"><span class="v">That\'s a wrap. See you next Miamivention.</span></div>';
+  }
+  refresh();
+  setInterval(refresh, 30000);
+
+  // ---- Flight tables ----
+  function flightTable(id, dir) {
+    var list = T.flights.filter(function (f) { return f.dir === dir; })
+      .sort(function (a, b) { return (dir === "in" ? a.arrives < b.arrives : a.departs < b.departs) ? -1 : 1; });
+    document.getElementById(id).innerHTML =
+      '<tr class="head"><th>Who</th><th>Flight</th><th>Route</th><th>Departs</th><th>Lands</th><th>Conf</th></tr>' +
+      list.map(function (f) {
+        var name = flightName(f);
+        var link = f.flight
+          ? '<a href="https://www.google.com/search?q=' + encodeURIComponent(f.flight.split(" / ")[0] + " flight status") + '" target="_blank" rel="noopener">' + esc(name) + "</a>"
+          : esc(name);
+        return '<tr><td data-label="Who"><b>' + esc(who(f.people)) + '</b></td><td data-label="Flight">' + link + "</td>" +
+          '<td data-label="Route">' + esc(f.from) + " → " + (f.via ? esc(f.via) + " → " : "") + esc(f.to) + "</td>" +
+          '<td data-label="Departs">' + esc(fmtDateTime(f.departs)) + "</td>" +
+          '<td data-label="Lands">' + esc(fmtDateTime(f.arrives)) + "</td>" +
+          '<td data-label="Conf">' + esc(f.conf || "—") + "</td></tr>";
+      }).join("");
+  }
+  flightTable("arrivals-table", "in");
+  flightTable("departures-table", "out");
+
+  // ---- Lodging ----
+  var L = T.lodging;
+  document.getElementById("lodging-table").innerHTML =
+    "<tr><th>Where</th><td><b>" + esc(L.name) + "</b>" + (L.address ? "<br>" + mapsLink(L.address) : "") +
+      (L.unit ? "<br><b>" + esc(L.unit) + "</b>" : "") + "</td></tr>" +
+    (L.access ? "<tr><th>Access</th><td>" + esc(L.access) + "</td></tr>" : "") +
+    (L.wifi ? "<tr><th>Wi-Fi</th><td>" + esc(L.wifi) + "</td></tr>" : "") +
+    "<tr><th>Check-in</th><td>" + esc(L.checkIn) + "</td></tr>" +
+    "<tr><th>Check-out</th><td>" + esc(L.checkOut) + "</td></tr>" +
+    (L.hosts ? "<tr><th>Hosts</th><td>" + esc(L.hosts) + "</td></tr>" : "") +
+    (L.notes ? "<tr><th>Notes</th><td>" + esc(L.notes) + "</td></tr>" : "");
+
+  // ---- To-dos ----
+  var todo = T.todo || [];
+  document.getElementById("todo-win").hidden = !todo.length;
+  document.getElementById("todo").innerHTML = todo.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
+
+  // ---- Extra links ----
+  document.getElementById("links").innerHTML = (T.links || []).filter(function (l) { return l.url; }).map(function (l) {
+    return '<a class="btn" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.label) + "</a>";
+  }).join(" ");
+
+  // ---- Packing checklist (saved per device) ----
+  var KEY = "mv-packing", checked = {};
+  try { checked = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(checked)); } catch (e) {} }
+  var list = document.getElementById("packing-list");
+  list.innerHTML = T.packing.map(function (item, i) {
+    return '<li><label><input type="checkbox" id="pack-' + i + '" data-item="' + esc(item) + '"' + (checked[item] ? " checked" : "") +
+      "><span>" + esc(item) + "</span></label></li>";
+  }).join("");
+  list.addEventListener("change", function (e) {
+    checked[e.target.dataset.item] = e.target.checked;
+    save();
+  });
+  document.getElementById("reset-packing").onclick = function () {
+    checked = {};
+    save();
+    list.querySelectorAll("input").forEach(function (i) { i.checked = false; });
+  };
+
+  // ---- Calendar export ----
+  document.getElementById("ics").onclick = function () {
+    function stamp(d) { return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, ""); }
+    function txt(s) { return String(s || "").replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/([,;])/g, "\\$1"); }
+    var now = stamp(new Date());
+    var lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Miamivention//Itinerary//EN", "CALSCALE:GREGORIAN", "X-WR-CALNAME:Miamivention"];
+    all.forEach(function (a) {
+      var desc = [a.ev.notes, a.ev.flight, a.ev.conf && "Conf #" + a.ev.conf, a.ev.cost, a.ev.url].filter(Boolean).join("\n");
+      lines.push("BEGIN:VEVENT", "UID:" + a.id + "-" + T.start.replace(/\D/g, "") + "@miamivention",
+        "DTSTAMP:" + now, "DTSTART:" + stamp(a.start), "DTEND:" + stamp(a.end),
+        "SUMMARY:" + txt("🌴 " + a.ev.title));
+      if (a.ev.where) lines.push("LOCATION:" + txt(a.ev.where));
+      if (desc) lines.push("DESCRIPTION:" + txt(desc));
+      lines.push("END:VEVENT");
+    });
+    lines.push("END:VCALENDAR");
+    var blob = new Blob([lines.join("\r\n")], { type: "text/calendar" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "miamivention.ics";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+});
+</script>
+</body>
+</html>
