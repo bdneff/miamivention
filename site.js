@@ -319,14 +319,22 @@
   var PASS_KEY = "mv-pass", queue = [], unlocked = false;
 
   function bytes(s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); }
+  // Each password unlocks its own copy of the data key; try them all.
   function decrypt(pass) {
     var E = window.TRIP_ENC, subtle = window.crypto && crypto.subtle;
     if (!E || !subtle) return Promise.reject(new Error("unsupported"));
-    return subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"])
-      .then(function (km) {
-        return subtle.deriveKey({ name: "PBKDF2", salt: bytes(E.salt), iterations: E.iter, hash: "SHA-256" },
-          km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
-      })
+    function unwrap(slot) {
+      return subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"])
+        .then(function (km) {
+          return subtle.deriveKey({ name: "PBKDF2", salt: bytes(slot.salt), iterations: E.iter, hash: "SHA-256" },
+            km, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+        })
+        .then(function (kek) { return subtle.decrypt({ name: "AES-GCM", iv: bytes(slot.iv) }, kek, bytes(slot.key)); });
+    }
+    var attempt = Promise.reject();
+    E.keys.forEach(function (slot) { attempt = attempt.catch(function () { return unwrap(slot); }); });
+    return attempt
+      .then(function (raw) { return subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]); })
       .then(function (key) { return subtle.decrypt({ name: "AES-GCM", iv: bytes(E.iv) }, key, bytes(E.ct)); })
       .then(function (buf) { new Function(new TextDecoder().decode(buf))(); });
   }

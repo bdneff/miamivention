@@ -14,13 +14,13 @@ All trip details (names, flights, the Airbnb, crew photos) live in `data.enc.js`
 2. Crew photos go in `images/crew/` using the filenames in `data.js`.
 3. Re-encrypt:
    ```sh
-   node encrypt.js "the-password"
+   node encrypt.js "first-password" "second-password"
    ```
 4. Commit and push `data.enc.js`. The site updates in about a minute.
 
 Flight landings and takeoffs at MIA/FLL are added to the day-by-day itinerary automatically, so only list the plans in `days`.
 
-To change the password, run step 3 with a new one. The site asks for the password on every visit and never remembers it.
+Every password listed in step 3 unlocks the site. To add, change or drop one, rerun step 3 with the new list. The site asks for the password on every visit and never remembers it.
 
 ## Other bits
 

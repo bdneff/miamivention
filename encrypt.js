@@ -5,16 +5,19 @@
   only show up after the password. data.js and the photos stay on your machine
   (they're in .gitignore); only data.enc.js is published.
 
-  Usage:  node encrypt.js "the-password"
+  Any of the passwords unlocks the site: the data is encrypted once with a
+  random key, and that key is locked separately with each password.
+
+  Usage:  node encrypt.js "password-one" ["password-two" ...]
 */
 const fs = require("fs");
 const path = require("path");
 const vm = require("vm");
 const { webcrypto: crypto } = require("crypto");
 
-const password = process.argv[2] || process.env.MV_PASSWORD;
-if (!password) {
-  console.error('Usage: node encrypt.js "the-password"');
+const passwords = process.argv.slice(2);
+if (!passwords.length) {
+  console.error('Usage: node encrypt.js "password-one" ["password-two" ...]');
   process.exit(1);
 }
 
@@ -33,20 +36,32 @@ const b64 = (buf) => Buffer.from(buf).toString("base64");
     }
   }
   const src = "window.TRIP = " + JSON.stringify(trip) + ";";
-  const salt = crypto.getRandomValues(new Uint8Array(16));
+  // Encrypt the data once with a random key...
+  const dataKey = crypto.getRandomValues(new Uint8Array(32));
+  const aes = (raw, usage) => crypto.subtle.importKey("raw", raw, "AES-GCM", false, [usage]);
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
-  const key = await crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt, iterations: ITERATIONS, hash: "SHA-256" },
-    material,
-    { name: "AES-GCM", length: 256 },
-    false,
-    ["encrypt"]
-  );
-  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(src));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await aes(dataKey, "encrypt"), new TextEncoder().encode(src));
+
+  // ...then lock that key with each password.
+  const keys = [];
+  for (const password of passwords) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const kiv = crypto.getRandomValues(new Uint8Array(12));
+    const material = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+    const kek = await crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: ITERATIONS, hash: "SHA-256" },
+      material,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt"]
+    );
+    const wrapped = await crypto.subtle.encrypt({ name: "AES-GCM", iv: kiv }, kek, dataKey);
+    keys.push({ salt: b64(salt), iv: b64(kiv), key: b64(wrapped) });
+  }
+
   const out =
-    "/* Encrypted trip data. Edit data.js, then run: node encrypt.js \"password\" */\n" +
-    "window.TRIP_ENC = " + JSON.stringify({ iter: ITERATIONS, salt: b64(salt), iv: b64(iv), ct: b64(ct) }) + ";\n";
+    "/* Encrypted trip data. Edit data.js, then run: node encrypt.js \"password-one\" [\"password-two\" ...] */\n" +
+    "window.TRIP_ENC = " + JSON.stringify({ iter: ITERATIONS, keys, iv: b64(iv), ct: b64(ct) }) + ";\n";
   fs.writeFileSync(path.join(__dirname, "data.enc.js"), out);
-  console.log("Wrote data.enc.js (" + out.length + " bytes)");
+  console.log("Wrote data.enc.js (" + out.length + " bytes, " + passwords.length + " password(s))");
 })();
